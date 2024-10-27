@@ -7,6 +7,16 @@ class RegistrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.black), // Иконка крестика
+          onPressed: () {
+          Navigator.pushNamed(context, '/');
+          },
+        ),
+        backgroundColor: Colors.white, // Цвет AppBar
+        elevation: 0, // Убираем тень
+      ),
       body: Center(
         child: Container(
           width: 300, // Фиксированная ширина для контейнера
@@ -46,10 +56,7 @@ class RegistrationScreen extends StatelessWidget {
                   const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      );
+                      Navigator.pushNamed(context, 'login');
                     },
                     child: const Text(
                       'войти',

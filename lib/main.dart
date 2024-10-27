@@ -2,6 +2,7 @@ import 'package:bigus_4/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bigus_4/serviсes/news_service.dart';  // Импорт сервиса для запросов к API
 import 'package:bigus_4/models/news_model.dart';
+import 'package:bigus_4/registration_screen.dart';
 
 
 void main() {
@@ -16,7 +17,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: NewsPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => NewsPage(), // Главный экран
+        'login': (context) => const LoginScreen(), // Маршрут для экрана входа
+        'registration': (context) => const RegistrationScreen(), // Маршрут для экрана регистрации
+      },
     );
   }
 }
@@ -50,10 +56,7 @@ class _NewsPageState extends State<NewsPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
+              Navigator.pushNamed(context, 'login');
             },
             child: const Text(
               'Вход',
