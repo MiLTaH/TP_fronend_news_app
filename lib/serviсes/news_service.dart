@@ -4,7 +4,7 @@ import '../models/news_model.dart';  // Импорт модели данных
 
 class NewsService {
   // URL API вашего бэкенда
-  static const String apiUrl = 'https://example.com/api/news';  // Замените на реальный URL
+  static const String apiUrl = "http://localhost:8080/backend_news_war_exploded";  // Замените на реальный URL
 
   // Функция для запроса новостей
   Future<List<News>> fetchNews() async {

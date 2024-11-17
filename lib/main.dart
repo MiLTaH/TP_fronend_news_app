@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:bigus_4/serviсes/news_service.dart';  // Импорт сервиса для запросов к API
 import 'package:bigus_4/models/news_model.dart';
 import 'package:bigus_4/registration_screen.dart';
-
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MyApp());
