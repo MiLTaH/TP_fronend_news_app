@@ -1,0 +1,196 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Импортируем пакет для форматирования даты и времени
+import 'package:flutter/services.dart';
+
+class MessagesPage extends StatefulWidget {
+  const MessagesPage({super.key});
+
+  @override
+  _MessagesPageState createState() => _MessagesPageState();
+}
+
+class _MessagesPageState extends State<MessagesPage> {
+  late TextEditingController _controller;
+  late DateTime _date;
+  String? _selectedUser; // Текущий выбранный пользователь
+  String _myName = 'Я'; // Ваше имя
+  List<Map<String, dynamic>> users = [
+    {'name': 'Пользователь 1', 'messages': [
+      {'sender': 'Пользователь 1', 'text': 'Привет', 'date': '22.11 22:20'},
+      {'sender': 'Пользователь 1', 'text': 'Как дела?', 'date': '22.11 22:20'}
+    ]},
+    {'name': 'Пользователь 2', 'messages': [
+      {'sender': 'Пользователь 2', 'text': 'Здравствуй', 'date': '22.11 22:20'},
+      {'sender': 'Пользователь 2', 'text': 'Как ты?', 'date': '22.11 22:20'}
+    ]},
+    {'name': 'Пользователь 3', 'messages': [
+      {'sender': 'Пользователь 3', 'text': 'Привет, как жизнь?', 'date': '22.11 22:20'}
+    ]},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _date = DateTime.now();
+  }
+
+  // Метод для отправки сообщения
+  void _sendMessage() {
+    if (_selectedUser != null && _controller.text.isNotEmpty) {
+      setState(() {
+        // Находим выбранного пользователя и добавляем его сообщение
+        var selectedUser = users.firstWhere((user) => user['name'] == _selectedUser);
+        selectedUser['messages'].add({'sender': _myName, 'text': _controller.text, 'date': _formatDate(_date)}); // Добавляем ваше сообщение
+        
+
+        _controller.clear(); // Очищаем поле ввода после отправки
+      });
+    }
+  }
+
+  void _onKey(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      // Проверяем, был ли зажат Shift и нажата клавиша Enter
+      if (event.logicalKey == LogicalKeyboardKey.enter && event.logicalKey == LogicalKeyboardKey.shiftLeft) {
+        // Если Shift + Enter, то добавляем новую строку
+        _controller.text += '\n'; // Добавляем новую строку в TextField
+        _controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: _controller.text.length));
+      }
+    }
+  }
+
+  // Метод для форматирования даты и времени
+  String _formatDate(DateTime date) {
+    return DateFormat('dd.MM HH:mm').format(date); // Форматируем как dd.MM yyyy HH:mm
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Сообщения'),
+        backgroundColor: Color.fromARGB(255, 170, 255, 166), // Зеленый фон
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/');
+            },
+            child: Text('На главную', style: TextStyle(color: Colors.black)),
+          )
+        ],
+      ),
+      body: Row(
+        children: [
+          // Боковое меню (список пользователей)
+          Container(
+            width: 250,
+            color: Colors.grey[200],
+            child: ListView(
+              children: users.map((user) {
+                bool isSelected = user['name'] == _selectedUser; // Проверка, выбран ли пользователь
+                return Container(
+                  color: isSelected ? Colors.green[200] : Colors.transparent, // Выделяем фон для выбранного пользователя
+                  child: ListTile(
+                    title: Text(user['name']),
+                    onTap: () {
+                      setState(() {
+                        _selectedUser = user['name'];
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          // Панель сообщений
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: _selectedUser == null
+                      ? Center(child: Text('Выберите пользователя для чата'))
+                      : ListView.builder(
+                          itemCount: users
+                              .firstWhere((user) => user['name'] == _selectedUser)['messages']
+                              .length,
+                          itemBuilder: (context, index) {
+                            var message = users
+                                .firstWhere((user) => user['name'] == _selectedUser)['messages']
+                                [index];
+
+                            // Проверяем, является ли сообщение отправленным вами
+                            bool isUserMessage = message['sender'] == _myName;
+
+                            return Container(
+                              padding: EdgeInsets.all(8),
+                              alignment: isUserMessage
+                                  ? Alignment.centerRight // Ваши сообщения справа
+                                  : Alignment.centerLeft, // Сообщения других пользователей слева
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: isUserMessage
+                                      ? Colors.green[100] // Ваши сообщения зеленые
+                                      : Colors.orange[100], // Сообщения других пользователей оранжевые
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(message['text']),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      message['date'],
+                                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+                // Поле для ввода сообщения
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: KeyboardListener(
+                          focusNode: FocusNode(), // Фокус для прослушивания клавиш
+                          onKeyEvent: _onKey, // Обработчик для нажатия клавиш
+                          child: TextField(
+                            controller: _controller,
+                            maxLines: null, // Поддержка многострочного ввода
+                            decoration: InputDecoration(
+                              hintText: 'Напишите сообщение...',
+                              border: OutlineInputBorder(),
+                            ),
+                            textInputAction: TextInputAction.send,
+                            onSubmitted: (value) {
+                              _sendMessage();
+                            },
+                            onEditingComplete: () {
+                              _sendMessage();
+                            },
+                            keyboardType: TextInputType.multiline,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: _sendMessage,
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
