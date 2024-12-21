@@ -2,6 +2,8 @@ import 'package:bigus_4/resourses/config.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; // Импорт библиотеки для работы с локальным хранилищем
+import 'package:jwt_decoder/jwt_decoder.dart'; // Импорт для работы с JWT
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -21,43 +23,80 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final email = _emailController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
+
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Пароли не совпадают')),
+        const SnackBar(content: Text('Пароли не совпадают')),
       );
       return;
     }
-    // Обновите базовый URL по мере необходимости
-    final url = Uri.parse('$baseUrl/registration');
+
+    final url = Uri.parse('$baseUrl/register'); // Укажите правильный путь
+
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'name': username,
+          'login': username,
           'password': password,
           'email': email,
         }),
       );
+
+      print('Ответ от сервера: ${response.body}'); // Логируем полный ответ сервера
+
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Регистрация успешна')),
-        );
-        Navigator.pushReplacementNamed(context, 'login');
+        final responseData = jsonDecode(response.body);
+
+        if (responseData.containsKey('jwt')) {
+          final token = responseData['jwt']; // Извлекаем токен
+          print('Полученный токен: $token');
+
+          // Проверяем, что токен — это строка
+          if (token is! String) {
+            throw FormatException('Токен не является строкой');
+          }
+
+          // Проверяем, валиден ли токен
+          if (JwtDecoder.isExpired(token)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Ошибка: токен истёк')),
+            );
+            return;
+          }
+
+          // Декодируем токен (опционально)
+          final decodedToken = JwtDecoder.decode(token);
+          print('Декодированный токен: $decodedToken');
+
+          // Сохраняем токен в локальное хранилище
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('jwt', token);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Регистрация успешна')),
+          );
+
+          Navigator.pushReplacementNamed(context, '/');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ошибка: токен не найден в ответе')),
+          );
+        }
       } else {
-        // Вывод информации о статусе и теле ответа для отладки
+        print('Ошибка регистрации. Статус: ${response.statusCode}, Ответ: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка регистрации: ${response.statusCode} ${response.body}')),
         );
       }
     } catch (e) {
-      // Обработка исключений
+      print('Ошибка: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка: $e')),
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +129,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               _buildTextField(_confirmPasswordController, 'подтвердите пароль', obscureText: true),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: registerUser, // Вызов функции регистрации при нажатии
+                onPressed: registerUser,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[100],
                   padding: const EdgeInsets.symmetric(vertical: 15),

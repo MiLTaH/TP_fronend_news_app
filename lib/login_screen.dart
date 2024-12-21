@@ -1,8 +1,18 @@
 import 'package:bigus_4/resourses/config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'registration_screen.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
+void handleToken(String token) {
+  if (JwtDecoder.isExpired(token)) {
+    print('Токен истёк');
+  } else {
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    print('Полезная нагрузка: $decodedToken');
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,45 +26,71 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/users/1'), // Предположим, что ваш API принимает PUT запрос на /login
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(<String, String>{
-        'password': _passwordController.text,
-        'email': _usernameController.text,
-      }),
-    );
-
-    if (response.statusCode >= 200 && response.statusCode <= 300) {
-      // Если сервер вернул 200 OK, значит, авторизация прошла успешно
-      var data = jsonDecode(response.body);
-      // Сохраните токен или выполняйте другие действия при успешной авторизации
-      String token = data['token']; // Измените в зависимости от структуры ответа сервера
-      print('Успешная авторизация, токен: $token');
-
-      // Перейдите на главную страницу или куда вам нужно
-      Navigator.pushNamed(context, '/');
-    } else {
-      // Если сервер вернул ошибку
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Ошибка'),
-            content: const Text('Неверный логин или пароль.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Закрыть'),
-              ),
-            ],
-          );
+    try {
+      // Отправка POST-запроса на сервер
+      final response = await http.post(
+        Uri.parse('$baseUrl/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
         },
+        body: jsonEncode(<String, String>{
+          'login': _usernameController.text,
+          'password': _passwordController.text,
+        }),
       );
+
+      print('Ответ от сервера: ${response.body}'); // Логируем полный ответ сервера
+
+      if (response.statusCode >= 200 && response.statusCode <= 300) {
+        // Обработка успешного ответа
+        var data = jsonDecode(response.body);
+        String token = data['jwt']; // Получаем токен из JSON
+        print('Полученный токен: $token');
+
+        // Сохранение токена
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt', token);
+
+        // Работа с токеном
+        handleToken(token);
+
+        // Переход на главную страницу
+        Navigator.pushNamed(context, '/');
+      } else if (response.statusCode == 401) {
+        // Обработка ошибки авторизации
+        var data = jsonDecode(response.body);
+        String errorMessage = data['error'];
+        _showErrorDialog('Ошибка авторизации', errorMessage);
+      } else {
+        // Обработка других ошибок
+        _showErrorDialog('Ошибка', 'Неожиданная ошибка: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Обработка исключений, например, при проблемах с сетью
+      _showErrorDialog('Ошибка', 'Не удалось подключиться к серверу: $e');
     }
   }
+
+// Функция для показа диалогов с ошибками
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Закрыть'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
