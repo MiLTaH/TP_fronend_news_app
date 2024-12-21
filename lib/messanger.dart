@@ -68,6 +68,9 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isMobile = constraints.maxWidth < 600;
     return Scaffold(
       appBar: AppBar(
         title: Text('Сообщения'),
@@ -84,26 +87,27 @@ class _MessagesPageState extends State<MessagesPage> {
       body: Row(
         children: [
           // Боковое меню (список пользователей)
-          Container(
-            width: 250,
-            color: Colors.grey[200],
-            child: ListView(
-              children: users.map((user) {
-                bool isSelected = user['name'] == _selectedUser; // Проверка, выбран ли пользователь
-                return Container(
-                  color: isSelected ? Colors.green[200] : Colors.transparent, // Выделяем фон для выбранного пользователя
-                  child: ListTile(
-                    title: Text(user['name']),
-                    onTap: () {
-                      setState(() {
-                        _selectedUser = user['name'];
-                      });
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+          if (!isMobile || _selectedUser == null)
+                Container(
+                  width: 250,
+                  color: Colors.grey[200],
+                  child: ListView(
+                    children: users.map((user) {
+                      bool isSelected = user['name'] == _selectedUser;
+                      return Container(
+                        color: isSelected ? Colors.green[200] : Colors.transparent,
+                        child: ListTile(
+                          title: Text(user['name']),
+                          onTap: () {
+                            setState(() {
+                              _selectedUser = user['name'];
+                            });
+                          },
+                        ),
+                      );
+                    }).toList(),
+                ),
+              ),
           // Панель сообщений
           Expanded(
             child: Column(
@@ -192,5 +196,7 @@ class _MessagesPageState extends State<MessagesPage> {
         ],
       ),
     );
+    },
+   );
   }
 }
