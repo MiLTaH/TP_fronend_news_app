@@ -1,8 +1,96 @@
+import 'package:bigus_4/resourses/config.dart';
 import 'package:flutter/material.dart';
-import 'registration_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
-class LoginScreen extends StatelessWidget {
+void handleToken(String token) {
+  if (JwtDecoder.isExpired(token)) {
+    print('Токен истёк');
+  } else {
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    print('Полезная нагрузка: $decodedToken');
+  }
+}
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    try {
+      // Отправка POST-запроса на сервер
+      final response = await http.post(
+        Uri.parse('$baseUrl/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'login': _usernameController.text,
+          'password': _passwordController.text,
+        }),
+      );
+
+      print('Ответ от сервера: ${response.body}'); // Логируем полный ответ сервера
+
+      if (response.statusCode >= 200 && response.statusCode <= 300) {
+        // Обработка успешного ответа
+        var data = jsonDecode(response.body);
+        String token = data['jwt']; // Получаем токен из JSON
+        print('Полученный токен: $token');
+
+        // Сохранение токена
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt', token);
+
+        // Работа с токеном
+        handleToken(token);
+
+        // Переход на главную страницу
+        Navigator.pushNamed(context, '/');
+      } else if (response.statusCode == 401) {
+        // Обработка ошибки авторизации
+        var data = jsonDecode(response.body);
+        String errorMessage = data['error'];
+        _showErrorDialog('Ошибка авторизации', errorMessage);
+      } else {
+        // Обработка других ошибок
+        _showErrorDialog('Ошибка', 'Неожиданная ошибка: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Обработка исключений, например, при проблемах с сетью
+      _showErrorDialog('Ошибка', 'Не удалось подключиться к серверу: $e');
+    }
+  }
+
+// Функция для показа диалогов с ошибками
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Закрыть'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +99,7 @@ class LoginScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.black), // Иконка крестика
           onPressed: () {
-          Navigator.pushNamed(context, '/');
+            Navigator.pushNamed(context, '/');
           },
         ),
         backgroundColor: Colors.white, // Цвет AppBar
@@ -29,13 +117,11 @@ class LoginScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              _buildTextField('логин'),
-              _buildTextField('пароль', obscureText: true),
+              _buildTextField('почта', _usernameController),
+              _buildTextField('пароль', _passwordController, obscureText: true),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  // Логика для подтверждения входа
-                },
+                onPressed: _login, // Логика для подтверждения входа
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[100],
                   padding: const EdgeInsets.symmetric(vertical: 15),
@@ -70,10 +156,11 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(String hint, {bool obscureText = false}) {
+  Widget _buildTextField(String hint, TextEditingController controller, {bool obscureText = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
+        controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hint,
@@ -85,3 +172,4 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+
