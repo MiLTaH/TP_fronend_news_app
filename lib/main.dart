@@ -3,16 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:bigus_4/models/news_model.dart';
 import 'package:bigus_4/serviсes/news_service.dart';
 import 'package:bigus_4/create_news_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:bigus_4/login_screen.dart';
 import 'package:bigus_4/news_screen.dart';
 import 'package:bigus_4/registration_screen.dart';
 import 'dart:ui'; // Для размытия
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
 
 void main() {
   runApp(MyApp());
 }
+
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -23,6 +29,17 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        S.delegate, // Генерированная локализация, где S - это класс, который генерирует flutter gen-l10n
+      ],
+      locale: Locale('en'),
+      supportedLocales: [
+        Locale('en', ''),
+        Locale('ru', ''),
+      ],
       routes: {
         '/': (context) => NewsPage(), // Главный экран
         'login': (context) => const LoginScreen(), // Маршрут для экрана входа
@@ -223,8 +240,8 @@ void searchNews(String query) async {
             ),
             title: TextField(
             onChanged: searchNews,
-            decoration: const InputDecoration(
-              hintText: 'Поиск...',
+            decoration: InputDecoration(
+              hintText: S.of(context)?.search,
               border: InputBorder.none,
               ),
             ),
