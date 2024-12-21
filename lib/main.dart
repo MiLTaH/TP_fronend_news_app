@@ -2,9 +2,13 @@ import 'package:bigus_4/messanger.dart';
 import 'package:flutter/material.dart';
 import 'package:bigus_4/models/news_model.dart';
 import 'package:bigus_4/serviсes/news_service.dart';
+import 'package:bigus_4/create_news_screen.dart';
 import 'package:bigus_4/login_screen.dart';
+import 'package:bigus_4/news_screen.dart';
 import 'package:bigus_4/registration_screen.dart';
 import 'dart:ui'; // Для размытия
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -24,6 +28,7 @@ class MyApp extends StatelessWidget {
         'login': (context) => const LoginScreen(), // Маршрут для экрана входа
         'registration': (context) => const RegistrationScreen(), // Маршрут для экрана регистрации
         'messanger': (context) => const MessagesPage(),
+        'creator': (context) => const CreateNewsScreen(),
       },
     );
   }
@@ -36,13 +41,165 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   late Future<List<News>> futureNews;
+  int currentPage = 1; // Текущая страница
+  final int newsPerPage = 10; // Количество новостей на одной странице
   bool _isDrawerOpen = false; // Переменная для состояния бокового меню
+  String searchQuery = ''; // Хранение текста поиска
+  List<News> filteredNews = []; 
+    List<News> mockNews = [
+  News(
+    title: 'Новость 1',
+    description: 'Описание для новости 1. Эта новость очень важная.',
+    url: 'https://example.com/news1',
+    publishedDate: '21.12.2024 10:00',
+    tags: ['политика', 'экономика'],
+  ),
+  News(
+    title: 'Новость 2',
+    description: 'Описание для новости 2. Читайте всё здесь.',
+    url: 'https://example.com/news2',
+    publishedDate: '20.12.2024 15:00',
+    tags: ['технологии', 'наука'],
+  ),
+  News(
+    title: 'Новость 3',
+    description: 'Описание для новости 3. Последние события!',
+    url: 'https://example.com/news3',
+    publishedDate: '19.12.2024 09:30',
+    tags: ['спорт', 'здоровье'],
+  ),
+  News(
+    title: 'Новость 4',
+    description: 'Описание для новости 4. Ещё одна важная новость.',
+    url: 'https://example.com/news4',
+    publishedDate: '18.12.2024 13:45',
+    tags: ['искусство', 'музыка'],
+  ),
+  News(
+    title: 'Новость 5',
+    description: 'Описание для новости 5. Всё, что вам нужно знать.',
+    url: 'https://example.com/news5',
+    publishedDate: '17.12.2024 12:00',
+    tags: ['образование', 'путешествия'],
+  ),
+  News(
+    title: 'Новость 6',
+    description: 'Описание для новости 6. Пропустить невозможно!',
+    url: 'https://example.com/news6',
+    publishedDate: '16.12.2024 08:15',
+    tags: ['финансы', 'инвестиции'],
+  ),
+  News(
+    title: 'Новость 7',
+    description: 'Описание для новости 7. Специальный репортаж.',
+    url: 'https://example.com/news7',
+    publishedDate: '15.12.2024 17:20',
+    tags: ['мода', 'стиль'],
+  ),
+  News(
+    title: 'Новость 8',
+    description: 'Описание для новости 8. Удивительные открытия.',
+    url: 'https://example.com/news8',
+    publishedDate: '14.12.2024 11:50',
+    tags: ['культура', 'история'],
+  ),
+  News(
+    title: 'Новость 9',
+    description: 'Описание для новости 9. Эксклюзивное интервью.',
+    url: 'https://example.com/news9',
+    publishedDate: '13.12.2024 14:05',
+    tags: ['бизнес', 'маркетинг'],
+  ),
+  News(
+    title: 'Новость 10',
+    description: 'Описание для новости 10. Важно знать!',
+    url: 'https://example.com/news10',
+    publishedDate: '12.12.2024 18:40',
+    tags: ['политика', 'мировые события'],
+  ),
+  News(
+    title: 'Новость 11',
+    description: 'Описание для новости 11. Невероятные факты.',
+    url: 'https://example.com/news11',
+    publishedDate: '11.12.2024 09:00',
+    tags: ['наука', 'исследования'],
+  ),
+  News(
+    title: 'Новость 12',
+    description: 'Описание для новости 12. Это должно быть известно.',
+    url: 'https://example.com/news12',
+    publishedDate: '10.12.2024 16:25',
+    tags: ['спорт', 'соревнования'],
+  ),
+  News(
+    title: 'Новость 13',
+    description: 'Описание для новости 13. Историческое событие.',
+    url: 'https://example.com/news13',
+    publishedDate: '09.12.2024 13:10',
+    tags: ['технологии', 'инновации'],
+  ),
+  News(
+    title: 'Новость 14',
+    description: 'Описание для новости 14. Новые перспективы.',
+    url: 'https://example.com/news14',
+    publishedDate: '08.12.2024 07:55',
+    tags: ['искусство', 'кино'],
+  ),
+  News(
+    title: 'Новость 15',
+    description: 'Описание для новости 15. Ещё один важный момент.',
+    url: 'https://example.com/news15',
+    publishedDate: '07.12.2024 20:30',
+    tags: ['здоровье', 'медицина'],
+  ),
+];
 
   @override
   void initState() {
     super.initState();
-    futureNews = NewsService().fetchNews(); // Получаем новости
+    // futureNews = NewsService().fetchNews(); // Получаем новости
+    futureNews = Future.value(mockNews);
   }
+
+  Future<List<String>> fetchNews() async {
+    // Имитация загрузки новостей
+    await Future.delayed(const Duration(seconds: 1));
+    return List.generate(50, (index) => 'Новость ${index + 1}');
+  }
+
+void searchNews(String query) async {
+  setState(() {
+    searchQuery = query; // Обновляем состояние поискового запроса
+    filteredNews = [];  // Очищаем текущий список
+  });
+
+  try {
+    // URL бекенда и конечная точка для поиска новостей
+    final url = Uri.parse('https://your-backend-api.com/search');
+    
+    // Отправка GET-запроса с параметром запроса
+    final response = await http.get(url.replace(queryParameters: {'query': query}));
+
+    if (response.statusCode == 200) {
+      // Парсим JSON-ответ
+      final List<dynamic> data = json.decode(response.body);
+      
+      // Конвертируем данные в список новостей
+      setState(() {
+        filteredNews = data.map((item) => News.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Ошибка при загрузке данных: ${response.statusCode}');
+    }
+  } catch (error) {
+    setState(() {
+      // Если произошла ошибка, можно добавить сообщение
+      filteredNews = [];
+    });
+    print('Ошибка поиска новостей: $error');
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +220,13 @@ class _NewsPageState extends State<NewsPage> {
                 });
                 print("Drawer state: $_isDrawerOpen");
               },
+            ),
+            title: TextField(
+            onChanged: searchNews,
+            decoration: const InputDecoration(
+              hintText: 'Поиск...',
+              border: InputBorder.none,
+              ),
             ),
             actions: [
               TextButton(
@@ -95,23 +259,108 @@ class _NewsPageState extends State<NewsPage> {
                   future: futureNews,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      List<News> newsList = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: newsList.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(newsList[index].title),
-                            subtitle: Text(newsList[index].description),
-                            onTap: () {
-                              _launchURL(newsList[index].url);
-                            },
-                          );
-                        },
+                      // Если есть запрос поиска, фильтруем новости
+                      List<News> displayedNews = searchQuery.isNotEmpty
+                          ? filteredNews
+                          : snapshot.data!;
+
+                      // Пагинация
+                      int totalPages = (displayedNews.length / newsPerPage).ceil();
+                      int startIndex = (currentPage - 1) * newsPerPage;
+                      int endIndex = (startIndex + newsPerPage).clamp(0, displayedNews.length);
+                      List<News> pagedNews = displayedNews.sublist(startIndex, endIndex);
+
+                      return Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: pagedNews.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                  child: ListTile(
+                                    leading: Container(
+                                      width: 60,
+                                      height: 60,
+                                      color: Colors.grey[300], // Заглушка для изображения
+                                    ),
+                                    title: Text(
+                                      pagedNews[index].title,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          pagedNews[index].description,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          'Опубликовано: ${pagedNews[index].publishedDate}',
+                                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                                        ),
+                                        Text(
+                                          '#${pagedNews[index].tags.join(' / #')}',
+                                          style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => NewsDetailScreen(
+                                            title: pagedNews[index].title,
+                                            description: pagedNews[index].description,
+                                            imageUrl: '',
+                                            publishedDate: pagedNews[index].publishedDate,
+                                            tags: pagedNews[index].tags.join(' / #'),
+                                            comments: [],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          // Пагинация
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: currentPage > 1
+                                    ? () {
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      }
+                                    : null,
+                                child: const Text('Назад'),
+                              ),
+                              Text('Страница $currentPage из $totalPages'),
+                              ElevatedButton(
+                                onPressed: currentPage < totalPages
+                                    ? () {
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
+                                    : null,
+                                child: const Text('Вперед'),
+                              ),
+                            ],
+                          ),
+                        ],
                       );
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return Center(child: Text('Ошибка: ${snapshot.error}'));
                     }
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   },
                 ),
               ),
@@ -166,9 +415,10 @@ class _NewsPageState extends State<NewsPage> {
                       ),
                     ),
                     ListTile(
-                      title: Text('Сообщества'),
+                      title: Text('Создать новость'),
                       onTap: () {
-                        // Логика для перехода на "Сообщества"
+                        // Логика для перехода на "создать новость"
+                        Navigator.pushNamed(context, 'creator');
                       },
                     ),
                     ListTile(

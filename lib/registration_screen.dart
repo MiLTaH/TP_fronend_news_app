@@ -18,7 +18,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   Future<void> registerUser() async {
+    if (!_formKey.currentState!.validate()) {
+      return; // Прерываем регистрацию, если форма не прошла валидацию
+    }
+
     final username = _usernameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
@@ -32,7 +38,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
 
     final url = Uri.parse('$baseUrl/register'); // Укажите правильный путь
-
     try {
       final response = await http.post(
         url,
@@ -84,13 +89,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             const SnackBar(content: Text('Ошибка: токен не найден в ответе')),
           );
         }
-      } else {
+        // Вывод информации о статусе и теле ответа для отладки
         print('Ошибка регистрации. Статус: ${response.statusCode}, Ответ: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка регистрации: ${response.statusCode} ${response.body}')),
         );
       }
     } catch (e) {
+      // Обработка исключений
       print('Ошибка: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка: $e')),
@@ -115,59 +121,63 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Container(
           width: 300,
           padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Регистрация',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              _buildTextField(_usernameController, 'логин'),
-              _buildTextField(_emailController, 'почта'),
-              _buildTextField(_passwordController, 'пароль', obscureText: true),
-              _buildTextField(_confirmPasswordController, 'подтвердите пароль', obscureText: true),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: registerUser,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[100],
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  minimumSize: const Size.fromHeight(56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+          child: Form(
+            key: _formKey, // Используем глобальный ключ для формы
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Регистрация',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                child: const Text('Подтвердить'),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('есть аккаунт?'),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, 'login');
-                    },
-                    child: const Text(
-                      'войти',
-                      style: TextStyle(color: Colors.pink, fontSize: 16),
+                const SizedBox(height: 20),
+                _buildTextField(_usernameController, 'Логин', validateUsername),
+                _buildTextField(_emailController, 'Почта', validateEmail),
+                _buildTextField(_passwordController, 'Пароль', validatePassword, obscureText: true),
+                _buildTextField(_confirmPasswordController, 'Подтвердите пароль', validateConfirmPassword, obscureText: true),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: registerUser, // Вызов функции регистрации при нажатии
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[100],
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    minimumSize: const Size.fromHeight(56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                ],
-              ),
-            ],
+                  child: const Text('Подтвердить'),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Есть аккаунт?'),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, 'login');
+                      },
+                      child: const Text(
+                        'Войти',
+                        style: TextStyle(color: Colors.pink, fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, {bool obscureText = false}) {
+  // Модифицированный метод _buildTextField с добавлением валидации
+  Widget _buildTextField(TextEditingController controller, String hint, String? Function(String?) validator, {bool obscureText = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
@@ -176,7 +186,53 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
+        validator: validator, // Применяем валидацию
       ),
     );
+  }
+
+  // Валидация для логина
+  String? validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Введите логин';
+    }
+    if (value.length < 3) {
+      return 'Логин должен содержать не менее 3 символов';
+    }
+    return null;
+  }
+
+  // Валидация для почты
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Введите почту';
+    }
+    final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    if (!regex.hasMatch(value)) {
+      return 'Введите валидный адрес электронной почты';
+    }
+    return null;
+  }
+
+  // Валидация для пароля
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Введите пароль';
+    }
+    if (value.length < 6) {
+      return 'Пароль должен быть не менее 6 символов';
+    }
+    return null;
+  }
+
+  // Валидация для подтверждения пароля
+  String? validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Подтвердите пароль';
+    }
+    if (value != _passwordController.text) {
+      return 'Пароли не совпадают';
+    }
+    return null;
   }
 }
