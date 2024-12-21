@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class NewsDetailScreen extends StatelessWidget {
+class NewsDetailScreen extends StatefulWidget {
   final String title;
   final String description;
   final String imageUrl;
@@ -16,6 +16,37 @@ class NewsDetailScreen extends StatelessWidget {
     required this.tags,
     required this.comments,
   });
+
+  @override
+  _NewsDetailScreenState createState() => _NewsDetailScreenState();
+}
+
+class _NewsDetailScreenState extends State<NewsDetailScreen> {
+  late TextEditingController _commentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentController = TextEditingController();
+  }
+
+  void _addComment() {
+    if (_commentController.text.isNotEmpty) {
+      setState(() {
+        widget.comments.add({
+          'author': 'Аноним', // Или добавить авторизацию для имени
+          'content': _commentController.text,
+        });
+        _commentController.clear();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +79,8 @@ class NewsDetailScreen extends StatelessWidget {
                     width: 150,
                     height: 150,
                     color: Colors.grey[300],
-                    child: imageUrl.isNotEmpty
-                        ? Image.network(imageUrl, fit: BoxFit.cover)
+                    child: widget.imageUrl.isNotEmpty
+                        ? Image.network(widget.imageUrl, fit: BoxFit.cover)
                         : const Icon(Icons.image, size: 60, color: Colors.grey),
                   ),
                   const SizedBox(width: 16),
@@ -58,7 +89,7 @@ class NewsDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          title,
+                          widget.title,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -66,12 +97,12 @@ class NewsDetailScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Опубликовано: ${publishedDate.toString()}',
+                          'Опубликовано: ${widget.publishedDate.toString()}',
                           style: const TextStyle(color: Colors.red),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          tags.toString(),
+                          widget.tags.toString(),
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -85,7 +116,7 @@ class NewsDetailScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Text(description),
+              Text(widget.description),
               const SizedBox(height: 16),
               const Divider(thickness: 1, color: Colors.grey),
               // Поле для добавления комментария
@@ -95,6 +126,7 @@ class NewsDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: _commentController,
                 decoration: InputDecoration(
                   hintText: 'Введите ваш комментарий',
                   border: OutlineInputBorder(
@@ -105,9 +137,7 @@ class NewsDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: () {
-                  // Логика для отправки комментария
-                },
+                onPressed: _addComment, // Логика для отправки комментария
                 child: const Text('Отправить'),
               ),
               const SizedBox(height: 16),
@@ -116,10 +146,10 @@ class NewsDetailScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Text('Комментариев: ${comments.length}'),
+              Text('Комментариев: ${widget.comments.length}'),
               const SizedBox(height: 8),
               // Список комментариев
-              ...comments.map((comment) {
+              ...widget.comments.map((comment) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Column(

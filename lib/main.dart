@@ -2,6 +2,7 @@ import 'package:bigus_4/messanger.dart';
 import 'package:flutter/material.dart';
 import 'package:bigus_4/models/news_model.dart';
 import 'package:bigus_4/serviсes/news_service.dart';
+import 'package:bigus_4/create_news_screen.dart';
 import 'package:bigus_4/login_screen.dart';
 import 'package:bigus_4/news_screen.dart';
 import 'package:bigus_4/registration_screen.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         'login': (context) => const LoginScreen(), // Маршрут для экрана входа
         'registration': (context) => const RegistrationScreen(), // Маршрут для экрана регистрации
         'messanger': (context) => const MessagesPage(),
+        'creator': (context) => const CreateNewsScreen(),
       },
     );
   }
@@ -413,9 +415,10 @@ void searchNews(String query) async {
                       ),
                     ),
                     ListTile(
-                      title: Text('Сообщества'),
+                      title: Text('Создать новость'),
                       onTap: () {
-                        // Логика для перехода на "Сообщества"
+                        // Логика для перехода на "создать новость"
+                        Navigator.pushNamed(context, 'creator');
                       },
                     ),
                     ListTile(

@@ -17,7 +17,8 @@ class _MessagesPageState extends State<MessagesPage> {
   List<Map<String, dynamic>> users = [
     {'name': 'Пользователь 1', 'messages': [
       {'sender': 'Пользователь 1', 'text': 'Привет', 'date': '22.11 22:20'},
-      {'sender': 'Пользователь 1', 'text': 'Как дела?', 'date': '22.11 22:20'}
+      {'sender': 'Пользователь 1', 'text': 'Как дела?', 'date': '22.11 22:20'},
+      {'sender': 'Я', 'text': 'Как ты?', 'date': '22.11 22:20'}
     ]},
     {'name': 'Пользователь 2', 'messages': [
       {'sender': 'Пользователь 2', 'text': 'Здравствуй', 'date': '22.11 22:20'},
