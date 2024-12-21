@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:bigus_4/models/news_model.dart';
 import 'package:bigus_4/serviсes/news_service.dart';
 import 'package:bigus_4/login_screen.dart';
+import 'package:bigus_4/news_screen.dart';
 import 'package:bigus_4/registration_screen.dart';
 import 'dart:ui'; // Для размытия
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -162,21 +165,39 @@ class _NewsPageState extends State<NewsPage> {
     return List.generate(50, (index) => 'Новость ${index + 1}');
   }
 
-  void searchNews(String query) {
+void searchNews(String query) async {
   setState(() {
-    searchQuery = query;
-    filteredNews = mockNews.where((news) {
-      final titleLower = news.title.toLowerCase();
-      final descriptionLower = news.description.toLowerCase();
-      final tagsLower = news.tags.join(' ').toLowerCase();
-      final searchLower = query.toLowerCase();
-
-      return titleLower.contains(searchLower) ||
-          descriptionLower.contains(searchLower) ||
-          tagsLower.contains(searchLower);
-    }).toList();
+    searchQuery = query; // Обновляем состояние поискового запроса
+    filteredNews = [];  // Очищаем текущий список
   });
+
+  try {
+    // URL бекенда и конечная точка для поиска новостей
+    final url = Uri.parse('https://your-backend-api.com/search');
+    
+    // Отправка GET-запроса с параметром запроса
+    final response = await http.get(url.replace(queryParameters: {'query': query}));
+
+    if (response.statusCode == 200) {
+      // Парсим JSON-ответ
+      final List<dynamic> data = json.decode(response.body);
+      
+      // Конвертируем данные в список новостей
+      setState(() {
+        filteredNews = data.map((item) => News.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Ошибка при загрузке данных: ${response.statusCode}');
+    }
+  } catch (error) {
+    setState(() {
+      // Если произошла ошибка, можно добавить сообщение
+      filteredNews = [];
+    });
+    print('Ошибка поиска новостей: $error');
+  }
 }
+
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +307,19 @@ class _NewsPageState extends State<NewsPage> {
                                       ],
                                     ),
                                     onTap: () {
-                                      _launchURL(pagedNews[index].url);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => NewsDetailScreen(
+                                            title: pagedNews[index].title,
+                                            description: pagedNews[index].description,
+                                            imageUrl: '',
+                                            publishedDate: pagedNews[index].publishedDate,
+                                            tags: pagedNews[index].tags.join(' / #'),
+                                            comments: [],
+                                          ),
+                                        ),
+                                      );
                                     },
                                   ),
                                 );
@@ -328,7 +361,7 @@ class _NewsPageState extends State<NewsPage> {
                     return const Center(child: CircularProgressIndicator());
                   },
                 ),
-                ),
+              ),
             ],
           ),
         ),
