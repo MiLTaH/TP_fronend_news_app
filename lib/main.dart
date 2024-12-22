@@ -239,7 +239,7 @@ void searchNews(String query) async {
               },
             ),
             title: TextField(
-            onChanged: searchNews,
+            onSubmitted: searchNews,
             decoration: InputDecoration(
               hintText: S.of(context)?.search,
               border: InputBorder.none,
