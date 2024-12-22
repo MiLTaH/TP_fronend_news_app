@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:provider/provider.dart';
+import 'package:bigus_4/models/auth_provider.dart';
 
 void handleToken(String token) {
   if (JwtDecoder.isExpired(token)) {
@@ -25,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+
   Future<void> _login() async {
     try {
       // Отправка POST-запроса на сервер
@@ -41,11 +44,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print('Ответ от сервера: ${response.body}'); // Логируем полный ответ сервера
 
-      if (response.statusCode >= 200 && response.statusCode <= 300) {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        // сохранение логина
+        String login = _usernameController.text;
         // Обработка успешного ответа
         var data = jsonDecode(response.body);
         String token = data['jwt']; // Получаем токен из JSON
         print('Полученный токен: $token');
+
+        String role = await _getUserRole(token);
+
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        await authProvider.saveAuthData(login, role);
 
         // Сохранение токена
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -70,6 +80,44 @@ class _LoginScreenState extends State<LoginScreen> {
       _showErrorDialog('Ошибка', 'Не удалось подключиться к серверу: $e');
     }
   }
+
+  Future<String> _getUserRole(String token) async {
+  try {
+    final uriEditor = Uri.parse('$baseUrl/users/updateUserRoleEditor');
+    final uriAdmin = Uri.parse('$baseUrl/users/updateUserRoleAdmin');
+
+    // Отправка запроса для проверки роли "Editor"
+    final responseEditor = await http.put(
+      uriEditor,
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (responseEditor.statusCode >= 200 && responseEditor.statusCode < 300) {
+      return 'Editor';
+    }
+
+    // Отправка запроса для проверки роли "Admin"
+    final responseAdmin = await http.put(
+      uriAdmin,
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (responseAdmin.statusCode >= 200 && responseAdmin.statusCode < 300) {
+      return 'Admin';
+    }
+
+    return 'User';
+  } catch (error) {
+    print('Ошибка определения роли: $error');
+    throw error;
+  }
+}
 
 // Функция для показа диалогов с ошибками
   void _showErrorDialog(String title, String message) {

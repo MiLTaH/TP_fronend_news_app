@@ -12,9 +12,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
+import 'package:provider/provider.dart';
+import 'package:bigus_4/models/auth_provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: MyApp(),
+    ),);
 }
 
 
@@ -33,6 +38,17 @@ class _MyApp extends State<MyApp> {
       _locale = locale;
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    // Загрузка данных аутентификации при запуске приложения
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      authProvider.loadAuthData();
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -84,7 +100,10 @@ class _NewsPageState extends State<NewsPage> {
     List<News> mockNews = [
   News(
     title: 'Новость 1',
-    description: 'Описание для новости 1. Эта новость очень важная.',
+    description: """Описание для новости 1. Эта новость очень важная
+    АВЫАЫВАЫВАЫВ
+    ЫВАЫВАЫВАЫВ
+    ВЫАЫВАЫВАЫВ""",
     url: 'https://example.com/news1',
     publishedDate: '21.12.2024 10:00',
     tags: ['политика', 'экономика'],
