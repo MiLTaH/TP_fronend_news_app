@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bigus_4/community_screen.dart';
+import 'generated/l10n.dart';
 
 class CommunitiesScreen extends StatefulWidget {
   const CommunitiesScreen({super.key});
@@ -42,7 +43,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Сообщества'),
+        title: Text(S.of(context)!.communities),
         backgroundColor: const Color.fromARGB(255, 170, 255, 166),
       ),
       body: ListView.builder(
@@ -71,7 +72,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
                     const SizedBox(height: 10),
                     // Описание
                     Text(
-                      'Описание: ${community['description']}',
+                      S.of(context)!.descriptionN(community['description']),
                       style: const TextStyle(fontSize: 14),
                       maxLines: 5,
                       overflow: TextOverflow.ellipsis,
@@ -103,7 +104,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              'Подписчики: ${community['subscribers']}',
+                              S.of(context)!.subscribers(community['subscribers']),
                               style: const TextStyle(fontSize: 14, color: Colors.grey),
                             ),
                             const SizedBox(height: 5),
@@ -118,7 +119,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
                                 backgroundColor: const Color.fromARGB(255, 170, 255, 166),
                                 foregroundColor: Colors.black,
                               ),
-                              child: const Text('Подписаться'),
+                              child: Text(S.of(context)!.subscribe),
                             ),
                           ],
                         ),

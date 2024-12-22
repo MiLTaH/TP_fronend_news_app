@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart'; // Импорт библиотеки для работы с локальным хранилищем
 import 'package:jwt_decoder/jwt_decoder.dart'; // Импорт для работы с JWT
+import 'generated/l10n.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -32,7 +33,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Пароли не совпадают')),
+        SnackBar(content: Text('Пароли не совпадают')),
       );
       return;
     }
@@ -60,13 +61,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
           // Проверяем, что токен — это строка
           if (token is! String) {
-            throw FormatException('Токен не является строкой');
+            throw FormatException(S.of(context)!.token_not_string);
           }
 
           // Проверяем, валиден ли токен
           if (JwtDecoder.isExpired(token)) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Ошибка: токен истёк')),
+              SnackBar(content: Text(S.of(context)!.err_token_out)),
             );
             return;
           }
@@ -80,7 +81,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           await prefs.setString('jwt', token);
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Регистрация успешна')),
+            SnackBar(content: Text(S.of(context)!.registrarion_succes)),
           );
 
           Navigator.pushReplacementNamed(context, '/');
@@ -92,14 +93,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         // Вывод информации о статусе и теле ответа для отладки
         print('Ошибка регистрации. Статус: ${response.statusCode}, Ответ: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка регистрации: ${response.statusCode} ${response.body}')),
+          SnackBar(content: Text(S.of(context)!.registrarion_error(response.statusCode, response.body))),
         );
       }
     } catch (e) {
       // Обработка исключений
       print('Ошибка: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка: $e')),
+        SnackBar(content: Text(S.of(context)!.error(e))),
       );
     }
   }
@@ -126,15 +127,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Регистрация',
+                Text(
+                  S.of(context)!.sign_in,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-                _buildTextField(_usernameController, 'Логин', validateUsername),
-                _buildTextField(_emailController, 'Почта', validateEmail),
-                _buildTextField(_passwordController, 'Пароль', validatePassword, obscureText: true),
-                _buildTextField(_confirmPasswordController, 'Подтвердите пароль', validateConfirmPassword, obscureText: true),
+                _buildTextField(_usernameController, S.of(context)!.login, validateUsername),
+                _buildTextField(_emailController, S.of(context)!.mail, validateEmail),
+                _buildTextField(_passwordController, S.of(context)!.password, validatePassword, obscureText: true),
+                _buildTextField(_confirmPasswordController, S.of(context)!.confirm_password, validateConfirmPassword, obscureText: true),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: registerUser, // Вызов функции регистрации при нажатии
@@ -146,20 +147,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text('Подтвердить'),
+                  child: Text(S.of(context)!.confirm),
                 ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Есть аккаунт?'),
+                    Text(S.of(context)!.have_acc),
                     const SizedBox(width: 5),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, 'login');
                       },
-                      child: const Text(
-                        'Войти',
+                      child: Text(
+                        S.of(context)!.enter,
                         style: TextStyle(color: Colors.pink, fontSize: 16),
                       ),
                     ),
@@ -194,10 +195,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // Валидация для логина
   String? validateUsername(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Введите логин';
+      return S.of(context)!.enter_login;
     }
     if (value.length < 3) {
-      return 'Логин должен содержать не менее 3 символов';
+      return S.of(context)!.login_3_chars;
     }
     return null;
   }
@@ -205,11 +206,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // Валидация для почты
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Введите почту';
+      return S.of(context)!.enter_mail;
     }
     final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
     if (!regex.hasMatch(value)) {
-      return 'Введите валидный адрес электронной почты';
+      return S.of(context)!.enter_valid_mail;
     }
     return null;
   }
@@ -217,10 +218,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // Валидация для пароля
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Введите пароль';
+      return S.of(context)!.enter_password;
     }
     if (value.length < 6) {
-      return 'Пароль должен быть не менее 6 символов';
+      return S.of(context)!.password_6_chars;
     }
     return null;
   }
@@ -228,10 +229,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // Валидация для подтверждения пароля
   String? validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Подтвердите пароль';
+      return S.of(context)!.confirm_password;
     }
     if (value != _passwordController.text) {
-      return 'Пароли не совпадают';
+      return S.of(context)!.passwords_failed;
     }
     return null;
   }

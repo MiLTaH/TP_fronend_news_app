@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Импортируем пакет для форматирования даты и времени
-import 'package:flutter/services.dart';
+import 'generated/l10n.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -86,14 +86,14 @@ class _MessagesPageState extends State<MessagesPage> {
         bool isMobile = constraints.maxWidth < 600;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Сообщения'),
+        title: Text(S.of(context)!.messanges),
         backgroundColor: Color.fromARGB(255, 170, 255, 166), // Зеленый фон
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pushNamed(context, '/');
             },
-            child: Text('На главную', style: TextStyle(color: Colors.black)),
+            child: Text(S.of(context)!.to_main_page, style: TextStyle(color: Colors.black)),
           )
         ],
       ),
@@ -127,7 +127,7 @@ class _MessagesPageState extends State<MessagesPage> {
               children: [
                 Expanded(
                   child: _selectedUser == null
-                      ? Center(child: Text('Выберите пользователя для чата'))
+                      ? Center(child: Text(S.of(context)!.select_user))
                       : ListView.builder(
                           controller: _scrollController,
                           itemCount: users
@@ -184,7 +184,7 @@ class _MessagesPageState extends State<MessagesPage> {
                             focusNode: _focusNode,
                             maxLines: null, // Поддержка многострочного ввода
                             decoration: InputDecoration(
-                              hintText: 'Напишите сообщение...',
+                              hintText: S.of(context)!.write_message,
                               border: OutlineInputBorder(),
                             ),
                             textInputAction: TextInputAction.send,

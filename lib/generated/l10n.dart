@@ -105,26 +105,6 @@ class S {
     );
   }
 
-  /// `Describtion`
-  String get desribtion {
-    return Intl.message(
-      'Describtion',
-      name: 'desribtion',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `URL of image`
-  String get image {
-    return Intl.message(
-      'URL of image',
-      name: 'image',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Tags (separated by commas)`
   String get tags {
     return Intl.message(
@@ -150,6 +130,16 @@ class S {
     return Intl.message(
       'Select a user to chat with',
       name: 'select_user',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a community`
+  String get select_community {
+    return Intl.message(
+      'Select a community',
+      name: 'select_community',
       desc: '',
       args: [],
     );
@@ -325,6 +315,16 @@ class S {
     );
   }
 
+  /// `Communitie`
+  String get communitie {
+    return Intl.message(
+      'Communitie',
+      name: 'communitie',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Error: {error}`
   String error(Object error) {
     return Intl.message(
@@ -332,6 +332,296 @@ class S {
       name: 'error',
       desc: '',
       args: [error],
+    );
+  }
+
+  /// `Subscribers: {num}`
+  String subscribers(Object num) {
+    return Intl.message(
+      'Subscribers: $num',
+      name: 'subscribers',
+      desc: '',
+      args: [num],
+    );
+  }
+
+  /// `Subscribe`
+  String get subscribe {
+    return Intl.message(
+      'Subscribe',
+      name: 'subscribe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description: `
+  String get description {
+    return Intl.message(
+      'Description: ',
+      name: 'description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description: {desc}`
+  String descriptionN(Object desc) {
+    return Intl.message(
+      'Description: $desc',
+      name: 'descriptionN',
+      desc: '',
+      args: [desc],
+    );
+  }
+
+  /// `Description`
+  String get description_clean {
+    return Intl.message(
+      'Description',
+      name: 'description_clean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `image URL`
+  String get URL_image {
+    return Intl.message(
+      'image URL',
+      name: 'URL_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Autorization error`
+  String get auth_err {
+    return Intl.message(
+      'Autorization error',
+      name: 'auth_err',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error`
+  String get error_clean {
+    return Intl.message(
+      'Error',
+      name: 'error_clean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unexpected error: {status}`
+  String unexpected_error(Object status) {
+    return Intl.message(
+      'Unexpected error: $status',
+      name: 'unexpected_error',
+      desc: '',
+      args: [status],
+    );
+  }
+
+  /// `Failed to connect to server: {e}`
+  String cant_connect(Object e) {
+    return Intl.message(
+      'Failed to connect to server: $e',
+      name: 'cant_connect',
+      desc: '',
+      args: [e],
+    );
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message(
+      'Close',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `News`
+  String get news {
+    return Intl.message(
+      'News',
+      name: 'news',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a comment`
+  String get add_comment {
+    return Intl.message(
+      'Add a comment',
+      name: 'add_comment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your comment`
+  String get write_comment {
+    return Intl.message(
+      'Enter your comment',
+      name: 'write_comment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send`
+  String get send {
+    return Intl.message(
+      'Send',
+      name: 'send',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comments`
+  String get comments {
+    return Intl.message(
+      'Comments',
+      name: 'comments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comments: {length}`
+  String commentsN(Object length) {
+    return Intl.message(
+      'Comments: $length',
+      name: 'commentsN',
+      desc: '',
+      args: [length],
+    );
+  }
+
+  /// `Anonymous`
+  String get anonymous {
+    return Intl.message(
+      'Anonymous',
+      name: 'anonymous',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Passwords failed`
+  String get passwords_failed {
+    return Intl.message(
+      'Passwords failed',
+      name: 'passwords_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Token is not a string`
+  String get token_not_string {
+    return Intl.message(
+      'Token is not a string',
+      name: 'token_not_string',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error: token has expired`
+  String get err_token_out {
+    return Intl.message(
+      'Error: token has expired',
+      name: 'err_token_out',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Registration error: ${statusCode} ${body}`
+  String registrarion_error(Object statusCode, Object body) {
+    return Intl.message(
+      'Registration error: \$$statusCode \$$body',
+      name: 'registrarion_error',
+      desc: '',
+      args: [statusCode, body],
+    );
+  }
+
+  /// `Registration successful`
+  String get registrarion_succes {
+    return Intl.message(
+      'Registration successful',
+      name: 'registrarion_succes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your login`
+  String get enter_login {
+    return Intl.message(
+      'Enter your login',
+      name: 'enter_login',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login must contain at least 3 characters`
+  String get login_3_chars {
+    return Intl.message(
+      'Login must contain at least 3 characters',
+      name: 'login_3_chars',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your email`
+  String get enter_mail {
+    return Intl.message(
+      'Enter your email',
+      name: 'enter_mail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid email address`
+  String get enter_valid_mail {
+    return Intl.message(
+      'Enter a valid email address',
+      name: 'enter_valid_mail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your password`
+  String get enter_password {
+    return Intl.message(
+      'Enter your password',
+      name: 'enter_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The password must be at least 6 characters`
+  String get password_6_chars {
+    return Intl.message(
+      'The password must be at least 6 characters',
+      name: 'password_6_chars',
+      desc: '',
+      args: [],
     );
   }
 }

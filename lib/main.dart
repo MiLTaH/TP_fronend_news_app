@@ -14,11 +14,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 import 'package:provider/provider.dart';
 import 'package:bigus_4/models/auth_provider.dart';
+import 'package:bigus_4/models/locale_provider.dart';
 import 'package:bigus_4/community.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => LocaleProvider()),
+      ],
       child: MyApp(),
     ),);
 }
@@ -35,10 +39,9 @@ class _MyApp extends State<MyApp> {
 
   // Функция для изменения локали
   void _changeLocale(Locale locale) {
-    setState(() {
-      _locale = locale;
-    });
-  }
+  final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+  localeProvider.setLocale(locale);
+}
 
   @override
   void initState() {
@@ -52,6 +55,8 @@ class _MyApp extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Provider.of<LocaleProvider>(context).locale;
+
     return MaterialApp(
       title: 'EzioNews',
       theme: ThemeData(
@@ -64,13 +69,13 @@ class _MyApp extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
         S.delegate, // Генерированная локализация, где S - это класс, который генерирует flutter gen-l10n
       ],
-      locale: _locale,
+      locale: locale,
       supportedLocales: [
         Locale('en', ''),
         Locale('ru', ''),
       ],
       routes: {
-        '/': (context) => NewsPage(changeLocale: _changeLocale), // Главный экран
+        '/': (context) => NewsPage(), // Главный экран
         'login': (context) => const LoginScreen(), // Маршрут для экрана входа
         'registration': (context) => const RegistrationScreen(), // Маршрут для экрана регистрации
         'messanger': (context) => const MessagesPage(),
@@ -82,9 +87,8 @@ class _MyApp extends State<MyApp> {
 }
 
 class NewsPage extends StatefulWidget {
-  final Function(Locale) changeLocale;
+  const NewsPage({Key? key}) : super(key: key);
 
-  const NewsPage({Key? key, required this.changeLocale}) : super(key: key);
   @override
   _NewsPageState createState() => _NewsPageState();
 }
@@ -257,20 +261,22 @@ void searchNews(String query) async {
 }
 
 void _changeLanguage(String language) {
-    setState(() {
-      _currentLanguage = language;
-      switch (language) {
-        case 'ENG':
-          widget.changeLocale(Locale('en')); // Сменить на английский
-          break;
-        case 'РУС':
-          widget.changeLocale(Locale('ru')); // Сменить на русский
-          break;
-        default:
-          widget.changeLocale(Locale('en'));
-      }
-    });
-  }
+  final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+
+  setState(() {
+    _currentLanguage = language;
+    switch (language) {
+      case 'ENG':
+        localeProvider.setLocale(Locale('en')); // Сменить на английский
+        break;
+      case 'РУС':
+        localeProvider.setLocale(Locale('ru')); // Сменить на русский
+        break;
+      default:
+        localeProvider.setLocale(Locale('en'));
+    }
+  });
+}
 
 
   @override

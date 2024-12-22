@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'generated/l10n.dart';
 
 class CommunityDetailScreen extends StatefulWidget {
   final String name;
@@ -43,17 +44,18 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Сообщество'),
+        title: Text(S.of(context)!.communitie),
         backgroundColor: const Color.fromARGB(255, 170, 255, 166),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'На главную',
+            child: Text(
+              S.of(context)!.to_main_page,
               style: TextStyle(color: Colors.black),
             ),
           ),
@@ -90,7 +92,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Подписчики: $_currentSubscribers',
+                          S.of(context)!.subscribers(_currentSubscribers),
                           style: const TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                         const SizedBox(height: 8),
@@ -100,7 +102,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                             backgroundColor: const Color.fromARGB(255, 170, 255, 166),
                             foregroundColor: Colors.black,
                           ),
-                          child: const Text('Подписаться'),
+                          child: Text(S.of(context)!.subscribe),
                         ),
                       ],
                     ),
@@ -108,8 +110,8 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Описание:',
+              Text(
+                S.of(context)!.description,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),

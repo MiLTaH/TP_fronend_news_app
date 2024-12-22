@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import 'package:bigus_4/models/auth_provider.dart';
+import 'generated/l10n.dart';
 
 void handleToken(String token) {
   if (JwtDecoder.isExpired(token)) {
@@ -70,14 +71,14 @@ class _LoginScreenState extends State<LoginScreen> {
         // Обработка ошибки авторизации
         var data = jsonDecode(response.body);
         String errorMessage = data['error'];
-        _showErrorDialog('Ошибка авторизации', errorMessage);
+        _showErrorDialog(S.of(context)!.auth_err, errorMessage);
       } else {
         // Обработка других ошибок
-        _showErrorDialog('Ошибка', 'Неожиданная ошибка: ${response.statusCode}');
+        _showErrorDialog(S.of(context)!.error_clean, S.of(context)!.unexpected_error(response.statusCode));
       }
     } catch (e) {
       // Обработка исключений, например, при проблемах с сетью
-      _showErrorDialog('Ошибка', 'Не удалось подключиться к серверу: $e');
+      _showErrorDialog(S.of(context)!.error_clean, S.of(context)!.cant_connect(e));
     }
   }
 
@@ -130,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Закрыть'),
+              child: Text(S.of(context)!.close),
             ),
           ],
         );
@@ -160,13 +161,13 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Вход',
+              Text(
+                S.of(context)!.log_in,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              _buildTextField('почта', _usernameController),
-              _buildTextField('пароль', _passwordController, obscureText: true),
+              _buildTextField(S.of(context)!.mail, _usernameController),
+              _buildTextField(S.of(context)!.password, _passwordController, obscureText: true),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _login, // Логика для подтверждения входа
@@ -178,20 +179,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: const Text('Подтвердить'),
+                child: Text(S.of(context)!.confirm),
               ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('нет аккаунта?'),
+                  Text(S.of(context)!.no_acc),
                   const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, 'registration');
                     },
-                    child: const Text(
-                      'создать',
+                    child: Text(
+                      S.of(context)!.create,
                       style: TextStyle(color: Colors.pink, fontSize: 16),
                     ),
                   ),

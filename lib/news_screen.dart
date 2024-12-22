@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'generated/l10n.dart';
 
 class NewsDetailScreen extends StatefulWidget {
   final String title;
@@ -52,14 +53,14 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Новость'),
+        title: Text(S.of(context)!.news),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'На главную',
+            child: Text(
+              S.of(context)!.to_main_page,
               style: TextStyle(color: Colors.black),
             ),
           )
@@ -97,7 +98,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Опубликовано: ${widget.publishedDate.toString()}',
+                          S.of(context)!.published(widget.publishedDate.toString()),
                           style: const TextStyle(color: Colors.red),
                         ),
                         const SizedBox(height: 8),
@@ -111,8 +112,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Описание:',
+              Text(
+                S.of(context)!.description,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -120,15 +121,15 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
               const SizedBox(height: 16),
               const Divider(thickness: 1, color: Colors.grey),
               // Поле для добавления комментария
-              const Text(
-                'Добавить комментарий',
+              Text(
+                S.of(context)!.add_comment,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: _commentController,
                 decoration: InputDecoration(
-                  hintText: 'Введите ваш комментарий',
+                  hintText: S.of(context)!.write_comment,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -138,15 +139,15 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: _addComment, // Логика для отправки комментария
-                child: const Text('Отправить'),
+                child: Text(S.of(context)!.send),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Комментарии',
+              Text(
+                S.of(context)!.comments,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Text('Комментариев: ${widget.comments.length}'),
+              Text(S.of(context)!.commentsN(widget.comments.length)),
               const SizedBox(height: 8),
               // Список комментариев
               ...widget.comments.map((comment) {
@@ -156,7 +157,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        comment['author'] ?? 'Аноним',
+                        comment['author'] ?? S.of(context)!.anonymous,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.blue,

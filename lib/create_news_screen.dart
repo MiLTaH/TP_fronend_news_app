@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'generated/l10n.dart';
 
 class CreateNewsScreen extends StatefulWidget {
   const CreateNewsScreen({super.key});
@@ -66,7 +67,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Создать новость'),
+        title: Text(S.of(context)!.create_news),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -77,8 +78,8 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
               // Заголовок
               TextField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Заголовок',
+                decoration: InputDecoration(
+                  labelText: S.of(context)!.title,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -87,8 +88,8 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
               // Описание
               TextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Описание',
+                decoration: InputDecoration(
+                  labelText: S.of(context)!.description_clean,
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 5,
@@ -98,8 +99,8 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
               // URL изображения
               TextField(
                 controller: _imageUrlController,
-                decoration: const InputDecoration(
-                  labelText: 'URL изображения',
+                decoration: InputDecoration(
+                  labelText: S.of(context)!.URL_image,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -108,8 +109,8 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
               // Теги
               TextField(
                 controller: _tagsController,
-                decoration: const InputDecoration(
-                  labelText: 'Теги (через запятую)',
+                decoration: InputDecoration(
+                  labelText: S.of(context)!.tags,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -117,7 +118,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
 
               DropdownButtonFormField<String>(
               value: _selectedCommunity,
-              hint: const Text('Выберите сообщество'),
+              hint: Text(S.of(context)!.select_community),
               items: communities.map((community) {
                 return DropdownMenuItem<String>(
                   value: community,
@@ -129,8 +130,8 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                   _selectedCommunity = value;
                 });
               },
-              decoration: const InputDecoration(
-                labelText: 'Сообщество',
+              decoration: InputDecoration(
+                labelText: S.of(context)!.communitie,
                 border: OutlineInputBorder(),
               ),
             ),
@@ -139,7 +140,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
               // Кнопка отправки
               ElevatedButton(
                 onPressed: _createNews,
-                child: const Text('Создать новость'),
+                child: Text(S.of(context)!.create_news),
               ),
             ],
           ),
