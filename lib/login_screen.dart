@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (responseEditor.statusCode >= 200 && responseEditor.statusCode < 300) {
-      return 'Editor';
+      return 'EDITOR';
     }
 
     // Отправка запроса для проверки роли "Admin"
@@ -110,10 +110,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (responseAdmin.statusCode >= 200 && responseAdmin.statusCode < 300) {
-      return 'Admin';
+      return 'ADMIN';
     }
 
-    return 'User';
+    return 'USER';
   } catch (error) {
     print('Ошибка определения роли: $error');
     throw error;
