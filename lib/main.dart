@@ -35,8 +35,6 @@ class MyApp extends StatefulWidget {
 
 
 class _MyApp extends State<MyApp> {
-  Locale _locale = Locale('en'); // Стартовая локаль
-
   // Функция для изменения локали
   void _changeLocale(Locale locale) {
   final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
@@ -73,6 +71,8 @@ class _MyApp extends State<MyApp> {
       supportedLocales: [
         Locale('en', ''),
         Locale('ru', ''),
+        Locale('zh', ''),
+        Locale('ja', '')
       ],
       routes: {
         '/': (context) => NewsPage(), // Главный экран
@@ -100,8 +100,8 @@ class _NewsPageState extends State<NewsPage> {
   final int newsPerPage = 10; // Количество новостей на одной странице
   bool _isDrawerOpen = false; // Переменная для состояния бокового меню
   String searchQuery = ''; // Хранение текста поиска
-  final List<String> languages = ['ENG', 'РУС'];
-  String _currentLanguage = 'ENG';
+  final List<String> languages = ['ENG', 'РУС', '中国人', '日本語'];
+  String _currentLanguage = '中国';
   List<News> filteredNews = []; 
     List<News> mockNews = [
   News(
@@ -272,8 +272,14 @@ void _changeLanguage(String language) {
       case 'РУС':
         localeProvider.setLocale(Locale('ru')); // Сменить на русский
         break;
+      case '中国':
+        localeProvider.setLocale(Locale('zh')); // Сменить на русский
+        break;
+      case '日本語':
+        localeProvider.setLocale(Locale('ja')); // Сменить на русский
+        break;
       default:
-        localeProvider.setLocale(Locale('en'));
+        localeProvider.setLocale(Locale('zh'));
     }
   });
 }
