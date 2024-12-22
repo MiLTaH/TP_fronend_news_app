@@ -48,7 +48,7 @@ class _MyApp extends State<MyApp> {
       authProvider.loadAuthData();
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -512,7 +512,29 @@ void _changeLanguage(String language) {
                       title: Text('Создать новость'),
                       onTap: () {
                         // Логика для перехода на "создать новость"
-                        Navigator.pushNamed(context, 'creator');
+                        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                          final userRole = authProvider.role;
+                          // Проверка роли
+                          if (userRole == 'admin' || userRole == 'editor') {
+                            Navigator.pushNamed(context, 'creator');
+                          } else {
+                            // Показ сообщения, если у пользователя нет доступа
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('Доступ запрещён'),
+                                    content: Text('У вас нет прав для создания новости.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('ОК'),
+                                      ),
+                                    ],
+                                  );
+                                }
+                            );
+                        }
                       },
                     ),
                     ListTile(
