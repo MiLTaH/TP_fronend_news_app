@@ -14,6 +14,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 import 'package:provider/provider.dart';
 import 'package:bigus_4/models/auth_provider.dart';
+import 'package:bigus_4/community.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -74,6 +75,7 @@ class _MyApp extends State<MyApp> {
         'registration': (context) => const RegistrationScreen(), // Маршрут для экрана регистрации
         'messanger': (context) => const MessagesPage(),
         'creator': (context) => const CreateNewsScreen(),
+        'community': (context) => const CommunitiesScreen(),
       },
     );
   }
@@ -541,6 +543,12 @@ void _changeLanguage(String language) {
                       title: Text('Сообщения'),
                       onTap: () {
                         Navigator.pushNamed(context, 'messanger');
+                      },
+                    ),
+                    ListTile(
+                      title: Text('Сообщества'),
+                      onTap: () {
+                        Navigator.pushNamed(context, 'community');
                       },
                     ),
                   ],
