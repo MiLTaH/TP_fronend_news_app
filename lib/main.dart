@@ -19,8 +19,21 @@ void main() {
 }
 
 
+class MyApp extends StatefulWidget {
+  @override
+  _MyApp createState() => _MyApp();
+}
 
-class MyApp extends StatelessWidget {
+
+class _MyApp extends State<MyApp> {
+  Locale _locale = Locale('en'); // Стартовая локаль
+
+  // Функция для изменения локали
+  void _changeLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,13 +48,13 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
         S.delegate, // Генерированная локализация, где S - это класс, который генерирует flutter gen-l10n
       ],
-      locale: Locale('en'),
+      locale: _locale,
       supportedLocales: [
         Locale('en', ''),
         Locale('ru', ''),
       ],
       routes: {
-        '/': (context) => NewsPage(), // Главный экран
+        '/': (context) => NewsPage(changeLocale: _changeLocale), // Главный экран
         'login': (context) => const LoginScreen(), // Маршрут для экрана входа
         'registration': (context) => const RegistrationScreen(), // Маршрут для экрана регистрации
         'messanger': (context) => const MessagesPage(),
@@ -52,16 +65,22 @@ class MyApp extends StatelessWidget {
 }
 
 class NewsPage extends StatefulWidget {
+  final Function(Locale) changeLocale;
+
+  const NewsPage({Key? key, required this.changeLocale}) : super(key: key);
   @override
   _NewsPageState createState() => _NewsPageState();
 }
 
 class _NewsPageState extends State<NewsPage> {
+  
   late Future<List<News>> futureNews;
   int currentPage = 1; // Текущая страница
   final int newsPerPage = 10; // Количество новостей на одной странице
   bool _isDrawerOpen = false; // Переменная для состояния бокового меню
   String searchQuery = ''; // Хранение текста поиска
+  final List<String> languages = ['ENG', 'РУС'];
+  String _currentLanguage = 'ENG';
   List<News> filteredNews = []; 
     List<News> mockNews = [
   News(
@@ -217,6 +236,22 @@ void searchNews(String query) async {
   }
 }
 
+void _changeLanguage(String language) {
+    setState(() {
+      _currentLanguage = language;
+      switch (language) {
+        case 'ENG':
+          widget.changeLocale(Locale('en')); // Сменить на английский
+          break;
+        case 'РУС':
+          widget.changeLocale(Locale('ru')); // Сменить на русский
+          break;
+        default:
+          widget.changeLocale(Locale('en'));
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -246,6 +281,30 @@ void searchNews(String query) async {
               ),
             ),
             actions: [
+              PopupMenuButton<String>(
+              onSelected: _changeLanguage, // Выбор языка
+              itemBuilder: (BuildContext context) {
+                return languages.map((String language) {
+                  return PopupMenuItem<String>(
+                    value: language,
+                    child: Text(language),
+                  );
+                }).toList();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      _currentLanguage, // Текущий выбранный язык
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    Icon(Icons.arrow_drop_down, color: Colors.black),
+                  ],
+                ),
+              ),
+            ),
+              // Кнопка для перехода на страницу "Вход"
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, 'login');
