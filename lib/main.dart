@@ -329,9 +329,9 @@ void _changeLanguage(String language) {
                 onPressed: () {
                   Navigator.pushNamed(context, 'login');
                 },
-                child: const Text(
-                  'Вход',
-                  style: TextStyle(color: Colors.black),
+                child: Text(
+                  S.of(context)!.log_in,
+                  style: const TextStyle(color: Colors.black),
                 ),
               ),
             ],
@@ -343,10 +343,10 @@ void _changeLanguage(String language) {
                 width: double.infinity,
                 color: const Color.fromARGB(255, 170, 255, 166),
                 padding: const EdgeInsets.all(8.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    'Главная',
-                    style: TextStyle(fontSize: 26, color: Colors.black),
+                    S.of(context)!.main_page,
+                    style: const TextStyle(fontSize: 26, color: Colors.black),
                   ),
                 ),
               ),
@@ -395,7 +395,7 @@ void _changeLanguage(String language) {
                                         ),
                                         const SizedBox(height: 5),
                                         Text(
-                                          'Опубликовано: ${pagedNews[index].publishedDate}',
+                                          S.of(context)!.published(pagedNews[index].publishedDate),
                                           style: const TextStyle(color: Colors.red, fontSize: 12),
                                         ),
                                         Text(
@@ -436,9 +436,9 @@ void _changeLanguage(String language) {
                                         });
                                       }
                                     : null,
-                                child: const Text('Назад'),
+                                child: Text(S.of(context)!.back),
                               ),
-                              Text('Страница $currentPage из $totalPages'),
+                              Text(S.of(context)!.pageNK(currentPage, totalPages)),
                               ElevatedButton(
                                 onPressed: currentPage < totalPages
                                     ? () {
@@ -447,14 +447,14 @@ void _changeLanguage(String language) {
                                         });
                                       }
                                     : null,
-                                child: const Text('Вперед'),
+                                child: Text(S.of(context)!.forward),
                               ),
                             ],
                           ),
                         ],
                       );
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Ошибка: ${snapshot.error}'));
+                      return Center(child: Text(S.of(context)!.error(snapshot.error ?? 'Unknown error')));
                     }
                     return const Center(child: CircularProgressIndicator());
                   },
@@ -505,13 +505,13 @@ void _changeLanguage(String language) {
                       width: double.infinity,
                       color: const Color.fromARGB(255, 170, 255, 166), // Зеленый фон
                       padding: const EdgeInsets.all(16.0),
-                      child: const Text(
-                        'Главная',
+                      child: Text(
+                        S.of(context)!.main_page,
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
                     ListTile(
-                      title: Text('Создать новость'),
+                      title: Text(S.of(context)!.create_news),
                       onTap: () {
                         // Логика для перехода на "создать новость"
                         final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -525,8 +525,8 @@ void _changeLanguage(String language) {
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    title: Text('Доступ запрещён'),
-                                    content: Text('У вас нет прав для создания новости.'),
+                                    title: Text(S.of(context)!.Access_denied),
+                                    content: Text(S.of(context)!.do_not_have_permission),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
@@ -540,13 +540,13 @@ void _changeLanguage(String language) {
                       },
                     ),
                     ListTile(
-                      title: Text('Сообщения'),
+                      title: Text(S.of(context)!.messanges),
                       onTap: () {
                         Navigator.pushNamed(context, 'messanger');
                       },
                     ),
                     ListTile(
-                      title: Text('Сообщества'),
+                      title: Text(S.of(context)!.communities),
                       onTap: () {
                         Navigator.pushNamed(context, 'community');
                       },

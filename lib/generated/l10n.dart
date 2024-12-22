@@ -254,6 +254,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Published: {date}`
+  String published(Object date) {
+    return Intl.message(
+      'Published: $date',
+      name: 'published',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Back`
+  String get back {
+    return Intl.message(
+      'Back',
+      name: 'back',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forward`
+  String get forward {
+    return Intl.message(
+      'Forward',
+      name: 'forward',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Page {currentPage} of {totalPages}`
+  String pageNK(Object currentPage, Object totalPages) {
+    return Intl.message(
+      'Page $currentPage of $totalPages',
+      name: 'pageNK',
+      desc: '',
+      args: [currentPage, totalPages],
+    );
+  }
+
+  /// `Access denied`
+  String get Access_denied {
+    return Intl.message(
+      'Access denied',
+      name: 'Access_denied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You do not have permission to create news.`
+  String get do_not_have_permission {
+    return Intl.message(
+      'You do not have permission to create news.',
+      name: 'do_not_have_permission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Communities`
+  String get communities {
+    return Intl.message(
+      'Communities',
+      name: 'communities',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error: {error}`
+  String error(Object error) {
+    return Intl.message(
+      'Error: $error',
+      name: 'error',
+      desc: '',
+      args: [error],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

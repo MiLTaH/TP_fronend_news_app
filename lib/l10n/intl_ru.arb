@@ -20,5 +20,14 @@
     "login": "Логин",
     "confirm_password": "Подтвердите пароль",
     "have_acc": "Есть аккаунт?",
-    "enter": "Войти"
+    "enter": "Войти",
+    "published": "Опубликовано: {date}",
+    "back": "Назад",
+    "forward": "Вперёд",
+    "pageNK": "Страница {currentPage} из {totalPages}",
+    "Access_denied": "Доступ запрещён",
+    "do_not_have_permission": "У вас нет прав для создания новости.",
+    "communities": "Сообщества",
+    "error": "Ошибка: {error}"
+
 }

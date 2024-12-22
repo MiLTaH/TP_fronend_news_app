@@ -19,14 +19,26 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ru';
 
+  static m0(error) => "Ошибка: ${error}";
+
+  static m1(currentPage, totalPages) => "Страница ${currentPage} из ${totalPages}";
+
+  static m2(date) => "Опубликовано: ${date}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
+    "Access_denied" : MessageLookupByLibrary.simpleMessage("Доступ запрещён"),
+    "back" : MessageLookupByLibrary.simpleMessage("Назад"),
+    "communities" : MessageLookupByLibrary.simpleMessage("Сообщества"),
     "confirm" : MessageLookupByLibrary.simpleMessage("Подтвердить"),
     "confirm_password" : MessageLookupByLibrary.simpleMessage("Подтвердите пароль"),
     "create" : MessageLookupByLibrary.simpleMessage("Cоздать"),
     "create_news" : MessageLookupByLibrary.simpleMessage("Создать новость"),
     "desribtion" : MessageLookupByLibrary.simpleMessage("Описание"),
+    "do_not_have_permission" : MessageLookupByLibrary.simpleMessage("У вас нет прав для создания новости."),
     "enter" : MessageLookupByLibrary.simpleMessage("Войти"),
+    "error" : m0,
+    "forward" : MessageLookupByLibrary.simpleMessage("Вперёд"),
     "have_acc" : MessageLookupByLibrary.simpleMessage("Есть аккаунт?"),
     "image" : MessageLookupByLibrary.simpleMessage("URL изображения"),
     "log_in" : MessageLookupByLibrary.simpleMessage("Вход"),
@@ -35,7 +47,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "main_page" : MessageLookupByLibrary.simpleMessage("Главная"),
     "messanges" : MessageLookupByLibrary.simpleMessage("Сообщения"),
     "no_acc" : MessageLookupByLibrary.simpleMessage("Нет аккаунта?"),
+    "pageNK" : m1,
     "password" : MessageLookupByLibrary.simpleMessage("Пароль"),
+    "published" : m2,
     "search" : MessageLookupByLibrary.simpleMessage("Поиск..."),
     "select_user" : MessageLookupByLibrary.simpleMessage("Выберите пользователя для чата"),
     "sign_in" : MessageLookupByLibrary.simpleMessage("Регистрация"),

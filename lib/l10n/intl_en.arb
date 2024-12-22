@@ -20,5 +20,13 @@
     "login": "Login",
     "confirm_password": "Confirm password",
     "have_acc": "Do you have an account?",
-    "enter": "Log in"
+    "enter": "Log in",
+    "published": "Published: {date}",
+    "back": "Back",
+    "forward": "Forward",
+    "pageNK": "Page {currentPage} of {totalPages}",
+    "Access_denied": "Access denied",
+    "do_not_have_permission": "You do not have permission to create news.",
+    "communities": "Communities",
+    "error": "Error: {error}"
 }

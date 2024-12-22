@@ -19,14 +19,26 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static m0(error) => "Error: ${error}";
+
+  static m1(currentPage, totalPages) => "Page ${currentPage} of ${totalPages}";
+
+  static m2(date) => "Published: ${date}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
+    "Access_denied" : MessageLookupByLibrary.simpleMessage("Access denied"),
+    "back" : MessageLookupByLibrary.simpleMessage("Back"),
+    "communities" : MessageLookupByLibrary.simpleMessage("Communities"),
     "confirm" : MessageLookupByLibrary.simpleMessage("Confirm"),
     "confirm_password" : MessageLookupByLibrary.simpleMessage("Confirm password"),
     "create" : MessageLookupByLibrary.simpleMessage("Create"),
     "create_news" : MessageLookupByLibrary.simpleMessage("Create news"),
     "desribtion" : MessageLookupByLibrary.simpleMessage("Describtion"),
+    "do_not_have_permission" : MessageLookupByLibrary.simpleMessage("You do not have permission to create news."),
     "enter" : MessageLookupByLibrary.simpleMessage("Log in"),
+    "error" : m0,
+    "forward" : MessageLookupByLibrary.simpleMessage("Forward"),
     "have_acc" : MessageLookupByLibrary.simpleMessage("Do you have an account?"),
     "image" : MessageLookupByLibrary.simpleMessage("URL of image"),
     "log_in" : MessageLookupByLibrary.simpleMessage("Log in"),
@@ -35,7 +47,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "main_page" : MessageLookupByLibrary.simpleMessage("Home"),
     "messanges" : MessageLookupByLibrary.simpleMessage("Messanges"),
     "no_acc" : MessageLookupByLibrary.simpleMessage("Don\'t have an account?"),
+    "pageNK" : m1,
     "password" : MessageLookupByLibrary.simpleMessage("Password"),
+    "published" : m2,
     "search" : MessageLookupByLibrary.simpleMessage("Search..."),
     "select_user" : MessageLookupByLibrary.simpleMessage("Select a user to chat with"),
     "sign_in" : MessageLookupByLibrary.simpleMessage("Registration"),
