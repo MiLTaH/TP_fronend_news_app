@@ -1,4 +1,5 @@
 import 'package:bigus_4/messanger.dart';
+import 'package:bigus_4/resourses/config.dart';
 import 'package:flutter/material.dart';
 import 'package:bigus_4/models/news_model.dart';
 import 'package:bigus_4/serviсes/news_service.dart';
@@ -229,7 +230,7 @@ class _NewsPageState extends State<NewsPage> {
   @override
   void initState() {
     super.initState();
-    // futureNews = NewsService().fetchNews(); // Получаем новости
+    futureNews = NewsService().fetchNews(); // Получаем новости
     futureNews = Future.value(mockNews);
   }
 
@@ -239,38 +240,38 @@ class _NewsPageState extends State<NewsPage> {
     return List.generate(50, (index) => 'Новость ${index + 1}');
   }
 
-void searchNews(String query) async {
-  setState(() {
-    searchQuery = query; // Обновляем состояние поискового запроса
-    filteredNews = [];  // Очищаем текущий список
-  });
-
-  try {
-    // URL бекенда и конечная точка для поиска новостей
-    final url = Uri.parse('https://your-backend-api.com/search');
-    
-    // Отправка GET-запроса с параметром запроса
-    final response = await http.get(url.replace(queryParameters: {'query': query}));
-
-    if (response.statusCode == 200) {
-      // Парсим JSON-ответ
-      final List<dynamic> data = json.decode(response.body);
-      
-      // Конвертируем данные в список новостей
-      setState(() {
-        filteredNews = data.map((item) => News.fromJson(item)).toList();
-      });
-    } else {
-      throw Exception('Ошибка при загрузке данных: ${response.statusCode}');
-    }
-  } catch (error) {
+  void searchNews(String query) async {
     setState(() {
-      // Если произошла ошибка, можно добавить сообщение
-      filteredNews = [];
+      searchQuery = query; // Сохраняем текущий запрос
+      filteredNews = [];  // Очищаем результаты поиска
     });
-    print('Ошибка поиска новостей: $error');
+    print("Запрос отправлен!");
+
+    try {
+      final url = Uri.parse('$baseUrl/api/news/name');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'name': query}), // Формируем JSON тело запроса
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("Запрос успешен!");
+        final decoded = utf8.decode(response.bodyBytes); // Декодируем как UTF-8
+        final List<dynamic> data = json.decode(decoded); // Парсим ответ из JSON
+        setState(() {
+          filteredNews = data.map((item) => News.fromJson(item)).toList(); // Преобразуем в объекты News
+        });
+      } else {
+        throw Exception('Ошибка при загрузке данных: ${response.statusCode}');
+      }
+    } catch (error) {
+      setState(() {
+        filteredNews = []; // Очищаем результаты при ошибке
+      });
+      print('Ошибка поиска новостей: $error');
+    }
   }
-}
 
 void _changeLanguage(String language) {
   final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
