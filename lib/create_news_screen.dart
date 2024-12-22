@@ -14,6 +14,14 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
   final TextEditingController _imageUrlController = TextEditingController();
   final TextEditingController _tagsController = TextEditingController();
 
+  // Переменная для выбранного сообщества
+  String? _selectedCommunity;
+
+  // Список сообществ
+  final List<String> communities = [
+    'Сообщество 1', 'Сообщество 2', 'Сообщество 3'
+  ];
+
   @override
   void dispose() {
     // Освобождаем ресурсы контроллеров
@@ -36,12 +44,16 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
       print('Описание: $description');
       print('Изображение: $imageUrl');
       print('Теги: $tags');
+      print('Сообщество: $_selectedCommunity');
 
       // Очистить поля после отправки
       _titleController.clear();
       _descriptionController.clear();
       _imageUrlController.clear();
       _tagsController.clear();
+      setState(() {
+        _selectedCommunity = null; // Сбросить выбранное сообщество
+      });
     } else {
       // Выводим ошибку, если не все обязательные поля заполнены
       ScaffoldMessenger.of(context).showSnackBar(
@@ -102,6 +114,27 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              DropdownButtonFormField<String>(
+              value: _selectedCommunity,
+              hint: const Text('Выберите сообщество'),
+              items: communities.map((community) {
+                return DropdownMenuItem<String>(
+                  value: community,
+                  child: Text(community),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCommunity = value;
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: 'Сообщество',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
 
               // Кнопка отправки
               ElevatedButton(
