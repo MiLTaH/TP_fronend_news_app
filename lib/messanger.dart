@@ -11,7 +11,8 @@ class MessagesPage extends StatefulWidget {
 
 class _MessagesPageState extends State<MessagesPage> {
   late TextEditingController _controller;
-  late DateTime _date;
+  final FocusNode _focusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
   String? _selectedUser; // Текущий выбранный пользователь
   String _myName = 'Я'; // Ваше имя
   List<Map<String, dynamic>> users = [
@@ -33,7 +34,6 @@ class _MessagesPageState extends State<MessagesPage> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _date = DateTime.now();
   }
 
   // Метод для отправки сообщения
@@ -42,24 +42,36 @@ class _MessagesPageState extends State<MessagesPage> {
       setState(() {
         // Находим выбранного пользователя и добавляем его сообщение
         var selectedUser = users.firstWhere((user) => user['name'] == _selectedUser);
-        selectedUser['messages'].add({'sender': _myName, 'text': _controller.text, 'date': _formatDate(_date)}); // Добавляем ваше сообщение
+        selectedUser['messages'].add({'sender': _myName, 'text': _controller.text, 'date': _formatDate(DateTime.now())}); // Добавляем ваше сообщение
         
 
         _controller.clear(); // Очищаем поле ввода после отправки
       });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
     }
+    
   }
 
-  void _onKey(KeyEvent event) {
-    if (event is KeyDownEvent) {
-      // Проверяем, был ли зажат Shift и нажата клавиша Enter
-      if (event.logicalKey == LogicalKeyboardKey.enter && event.logicalKey == LogicalKeyboardKey.shiftLeft) {
-        // Если Shift + Enter, то добавляем новую строку
-        _controller.text += '\n'; // Добавляем новую строку в TextField
-        _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length));
-      }
-    }
+
+
+  void _onKey() {
+      _controller.text += '\n'; // Добавляем новую строку в TextField
+      _controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: _controller.text.length));
+  }
+
+  void _onSubmitted(String value) {
+    // Обрабатываем переход на новую строку
+    _onKey();
+    // Удерживаем фокус на текстовом поле
+    FocusScope.of(context).requestFocus(_focusNode);
   }
 
   // Метод для форматирования даты и времени
@@ -117,6 +129,7 @@ class _MessagesPageState extends State<MessagesPage> {
                   child: _selectedUser == null
                       ? Center(child: Text('Выберите пользователя для чата'))
                       : ListView.builder(
+                          controller: _scrollController,
                           itemCount: users
                               .firstWhere((user) => user['name'] == _selectedUser)['messages']
                               .length,
@@ -165,21 +178,17 @@ class _MessagesPageState extends State<MessagesPage> {
                       Expanded(
                         child: KeyboardListener(
                           focusNode: FocusNode(), // Фокус для прослушивания клавиш
-                          onKeyEvent: _onKey, // Обработчик для нажатия клавиш
+                          // onKeyEvent: , // Обработчик для нажатия клавиш
                           child: TextField(
                             controller: _controller,
+                            focusNode: _focusNode,
                             maxLines: null, // Поддержка многострочного ввода
                             decoration: InputDecoration(
                               hintText: 'Напишите сообщение...',
                               border: OutlineInputBorder(),
                             ),
                             textInputAction: TextInputAction.send,
-                            onSubmitted: (value) {
-                              _sendMessage();
-                            },
-                            onEditingComplete: () {
-                              _sendMessage();
-                            },
+                            onSubmitted: _onSubmitted,
                             keyboardType: TextInputType.multiline,
                           ),
                         ),
