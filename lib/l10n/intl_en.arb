@@ -57,5 +57,8 @@
     "enter_mail":"Enter your email",
     "enter_valid_mail":"Enter a valid email address",
     "enter_password":"Enter your password",
-    "password_6_chars":"The password must be at least 6 characters"
+    "password_6_chars":"The password must be at least 6 characters",
+    "news_created":"news_created",
+    "fill_all_fields":"fill_all_fields",
+    "no_permissions":"no_permissions"
 }

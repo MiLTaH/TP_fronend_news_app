@@ -57,5 +57,8 @@
     "enter_mail":"Введите почту",
     "enter_valid_mail":"Введите валидный адрес электронной почты",
     "enter_password":"Введите пароль",
-    "password_6_chars":"Пароль должен быть не менее 6 символов"
+    "password_6_chars":"Пароль должен быть не менее 6 символов",
+    "news_created":"news_created",
+    "fill_all_fields":"fill_all_fields",
+    "no_permissions":"no_permissions"
 }
