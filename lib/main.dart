@@ -536,7 +536,7 @@ void _changeLanguage(String language) {
                         final authProvider = Provider.of<AuthProvider>(context, listen: false);
                           final userRole = authProvider.role;
                           // Проверка роли
-                          if (userRole == 'Admin' || userRole == 'Editor') {
+                          if (userRole == 'ADMIN' || userRole == 'EDITOR') {
                             Navigator.pushNamed(context, 'creator');
                           } else {
                             // Показ сообщения, если у пользователя нет доступа
