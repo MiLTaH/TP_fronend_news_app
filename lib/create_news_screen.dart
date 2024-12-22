@@ -88,7 +88,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
         }),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("S.of(context)!.news_created")),
         );

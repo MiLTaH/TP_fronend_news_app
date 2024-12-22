@@ -1,25 +1,28 @@
 class News {
+  final int id;
+  final int communityId;
   final String title;
-  final String description;
-  final String url;
-  final String publishedDate; // Дата публикации
-  final List<String> tags; // Теги
+  final String? content; // Поле content может быть null
+  final DateTime publishDate;
+  final String? source; // Поле source может быть null
 
   News({
+    required this.id,
+    required this.communityId,
     required this.title,
-    required this.description,
-    required this.url,
-    required this.publishedDate,
-    required this.tags,
+    this.content,
+    required this.publishDate,
+    this.source,
   });
 
   factory News.fromJson(Map<String, dynamic> json) {
     return News(
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      url: json['url'] ?? '',
-      publishedDate: json['publishedDate'] ?? '', // Убедитесь, что имя поля соответствует JSON
-      tags: List<String>.from(json['tags'] ?? []), // Убедитесь, что это массив строк
+      id: json['id'] as int,
+      communityId: json['communityId'] as int,
+      title: json['title'] as String,
+      content: json['content'] as String?, // Ключ 'content' корректен
+      publishDate: DateTime.parse(json['publishedDate'] as String), // Убедитесь в соответствии ключа
+      source: json['source'] as String?, // Ключ 'source' корректен
     );
   }
 }

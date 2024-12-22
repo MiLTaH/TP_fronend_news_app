@@ -6,7 +6,6 @@ class NewsDetailScreen extends StatefulWidget {
   final String description;
   final String imageUrl;
   final String publishedDate;
-  final String tags;
   final List<Map<String, String>> comments;
 
   NewsDetailScreen({
@@ -14,7 +13,6 @@ class NewsDetailScreen extends StatefulWidget {
     required this.description,
     required this.imageUrl,
     required this.publishedDate,
-    required this.tags,
     required this.comments,
   });
 
@@ -101,11 +99,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                           S.of(context)!.published(widget.publishedDate.toString()),
                           style: const TextStyle(color: Colors.red),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          widget.tags.toString(),
-                          style: const TextStyle(color: Colors.grey),
-                        ),
+                        const SizedBox(height: 8)
                       ],
                     ),
                   ),

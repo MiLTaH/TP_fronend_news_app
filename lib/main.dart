@@ -102,117 +102,129 @@ class _NewsPageState extends State<NewsPage> {
   String searchQuery = ''; // Хранение текста поиска
   final List<String> languages = ['ENG', 'РУС', '中国人', '日本語'];
   String _currentLanguage = '中国';
-  List<News> filteredNews = []; 
-    List<News> mockNews = [
-  News(
-    title: 'Новость 1',
-    description: """Описание для новости 1. Эта новость очень важная
-    АВЫАЫВАЫВАЫВ
-    ЫВАЫВАЫВАЫВ
-    ВЫАЫВАЫВАЫВ""",
-    url: 'https://example.com/news1',
-    publishedDate: '21.12.2024 10:00',
-    tags: ['политика', 'экономика'],
-  ),
-  News(
-    title: 'Новость 2',
-    description: 'Описание для новости 2. Читайте всё здесь.',
-    url: 'https://example.com/news2',
-    publishedDate: '20.12.2024 15:00',
-    tags: ['технологии', 'наука'],
-  ),
-  News(
-    title: 'Новость 3',
-    description: 'Описание для новости 3. Последние события!',
-    url: 'https://example.com/news3',
-    publishedDate: '19.12.2024 09:30',
-    tags: ['спорт', 'здоровье'],
-  ),
-  News(
-    title: 'Новость 4',
-    description: 'Описание для новости 4. Ещё одна важная новость.',
-    url: 'https://example.com/news4',
-    publishedDate: '18.12.2024 13:45',
-    tags: ['искусство', 'музыка'],
-  ),
-  News(
-    title: 'Новость 5',
-    description: 'Описание для новости 5. Всё, что вам нужно знать.',
-    url: 'https://example.com/news5',
-    publishedDate: '17.12.2024 12:00',
-    tags: ['образование', 'путешествия'],
-  ),
-  News(
-    title: 'Новость 6',
-    description: 'Описание для новости 6. Пропустить невозможно!',
-    url: 'https://example.com/news6',
-    publishedDate: '16.12.2024 08:15',
-    tags: ['финансы', 'инвестиции'],
-  ),
-  News(
-    title: 'Новость 7',
-    description: 'Описание для новости 7. Специальный репортаж.',
-    url: 'https://example.com/news7',
-    publishedDate: '15.12.2024 17:20',
-    tags: ['мода', 'стиль'],
-  ),
-  News(
-    title: 'Новость 8',
-    description: 'Описание для новости 8. Удивительные открытия.',
-    url: 'https://example.com/news8',
-    publishedDate: '14.12.2024 11:50',
-    tags: ['культура', 'история'],
-  ),
-  News(
-    title: 'Новость 9',
-    description: 'Описание для новости 9. Эксклюзивное интервью.',
-    url: 'https://example.com/news9',
-    publishedDate: '13.12.2024 14:05',
-    tags: ['бизнес', 'маркетинг'],
-  ),
-  News(
-    title: 'Новость 10',
-    description: 'Описание для новости 10. Важно знать!',
-    url: 'https://example.com/news10',
-    publishedDate: '12.12.2024 18:40',
-    tags: ['политика', 'мировые события'],
-  ),
-  News(
-    title: 'Новость 11',
-    description: 'Описание для новости 11. Невероятные факты.',
-    url: 'https://example.com/news11',
-    publishedDate: '11.12.2024 09:00',
-    tags: ['наука', 'исследования'],
-  ),
-  News(
-    title: 'Новость 12',
-    description: 'Описание для новости 12. Это должно быть известно.',
-    url: 'https://example.com/news12',
-    publishedDate: '10.12.2024 16:25',
-    tags: ['спорт', 'соревнования'],
-  ),
-  News(
-    title: 'Новость 13',
-    description: 'Описание для новости 13. Историческое событие.',
-    url: 'https://example.com/news13',
-    publishedDate: '09.12.2024 13:10',
-    tags: ['технологии', 'инновации'],
-  ),
-  News(
-    title: 'Новость 14',
-    description: 'Описание для новости 14. Новые перспективы.',
-    url: 'https://example.com/news14',
-    publishedDate: '08.12.2024 07:55',
-    tags: ['искусство', 'кино'],
-  ),
-  News(
-    title: 'Новость 15',
-    description: 'Описание для новости 15. Ещё один важный момент.',
-    url: 'https://example.com/news15',
-    publishedDate: '07.12.2024 20:30',
-    tags: ['здоровье', 'медицина'],
-  ),
-];
+  List<News> filteredNews = [];
+  List<News> mockNews = [
+    News(
+      id: 1,
+      communityId: 1,
+      title: "Последние тенденции в ИТ",
+      content: "Описание последнего технологического тренда.",
+      publishDate: DateTime.parse('2024-12-21T10:00:00'),
+      source: "https://technews.com",
+    ),
+    News(
+      id: 2,
+      communityId: 2,
+      title: 'Новость 2',
+      content: 'Описание для новости 2. Читайте всё здесь.',
+      publishDate: DateTime.parse('2024-12-20T15:00:00'),
+      source: 'https://example.com/news2',
+    ),
+    News(
+      id: 3,
+      communityId: 3,
+      title: 'Новость 3',
+      content: 'Описание для новости 3. Последние события!',
+      publishDate: DateTime.parse('2024-12-19T09:30:00'),
+      source: 'https://example.com/news3',
+    ),
+    News(
+      id: 4,
+      communityId: 4,
+      title: 'Новость 4',
+      content: 'Описание для новости 4. Ещё одна важная новость.',
+      publishDate: DateTime.parse('2024-12-18T13:45:00'),
+      source: 'https://example.com/news4',
+    ),
+    News(
+      id: 5,
+      communityId: 5,
+      title: 'Новость 5',
+      content: 'Описание для новости 5. Всё, что вам нужно знать.',
+      publishDate: DateTime.parse('2024-12-17T12:00:00'),
+      source: 'https://example.com/news5',
+    ),
+    News(
+      id: 6,
+      communityId: 6,
+      title: 'Новость 6',
+      content: 'Описание для новости 6. Пропустить невозможно!',
+      publishDate: DateTime.parse('2024-12-16T08:15:00'),
+      source: 'https://example.com/news6',
+    ),
+    News(
+      id: 7,
+      communityId: 7,
+      title: 'Новость 7',
+      content: 'Описание для новости 7. Специальный репортаж.',
+      publishDate: DateTime.parse('2024-12-15T17:20:00'), // Преобразование строки в DateTime
+      source: 'https://example.com/news7',
+    ),
+    News(
+      id: 8,
+      communityId: 8,
+      title: 'Новость 8',
+      content: 'Описание для новости 8. Удивительные открытия.',
+      publishDate: DateTime.parse('2024-12-14T11:50:00'),
+      source: 'https://example.com/news8',
+    ),
+    News(
+      id: 9,
+      communityId: 9,
+      title: 'Новость 9',
+      content: 'Описание для новости 9. Эксклюзивное интервью.',
+      publishDate: DateTime.parse('2024-12-13T14:05:00'),
+      source: 'https://example.com/news9',
+    ),
+    News(
+      id: 10,
+      communityId: 10,
+      title: 'Новость 10',
+      content: 'Описание для новости 10. Важно знать!',
+      publishDate: DateTime.parse('2024-12-12T18:40:00'),
+      source: 'https://example.com/news10',
+    ),
+    News(
+      id: 11,
+      communityId: 11,
+      title: 'Новость 11',
+      content: 'Описание для новости 11. Невероятные факты.',
+      publishDate: DateTime.parse('2024-12-11T09:00:00'),
+      source: 'https://example.com/news11',
+    ),
+    News(
+      id: 12,
+      communityId: 12,
+      title: 'Новость 12',
+      content: 'Описание для новости 12. Это должно быть известно.',
+      publishDate: DateTime.parse('2024-12-10T16:25:00'),
+      source: 'https://example.com/news12',
+    ),
+    News(
+      id: 13,
+      communityId: 13,
+      title: 'Новость 13',
+      content: 'Описание для новости 13. Историческое событие.',
+      publishDate: DateTime.parse('2024-12-09T13:10:00'),
+      source: 'https://example.com/news13',
+    ),
+    News(
+      id: 14,
+      communityId: 14,
+      title: 'Новость 14',
+      content: 'Описание для новости 14. Новые перспективы.',
+      publishDate: DateTime.parse('2024-12-08T07:55:00'),
+      source: 'https://example.com/news14',
+    ),
+    News(
+      id: 15,
+      communityId: 15,
+      title: 'Новость 15',
+      content: 'Описание для новости 15. Ещё один важный момент.',
+      publishDate: DateTime.parse('2024-12-07T20:30:00'),
+      source: 'https://example.com/news15',
+    ),
+  ];
 
   @override
   void initState() {
@@ -401,18 +413,14 @@ void _changeLanguage(String language) {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          pagedNews[index].description,
+                                          pagedNews[index].content ?? "something",
                                           maxLines: 3,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         const SizedBox(height: 5),
                                         Text(
-                                          S.of(context)!.published(pagedNews[index].publishedDate),
+                                          S.of(context)!.published(pagedNews[index].publishDate),
                                           style: const TextStyle(color: Colors.red, fontSize: 12),
-                                        ),
-                                        Text(
-                                          '#${pagedNews[index].tags.join(' / #')}',
-                                          style: const TextStyle(color: Colors.grey, fontSize: 12),
                                         ),
                                       ],
                                     ),
@@ -422,11 +430,10 @@ void _changeLanguage(String language) {
                                         MaterialPageRoute(
                                           builder: (context) => NewsDetailScreen(
                                             title: pagedNews[index].title,
-                                            description: pagedNews[index].description,
-                                            imageUrl: '',
-                                            publishedDate: pagedNews[index].publishedDate,
-                                            tags: pagedNews[index].tags.join(' / #'),
-                                            comments: [],
+                                            description: pagedNews[index].content ?? 'Описание отсутствует',
+                                            imageUrl: '', // Убедитесь, что у вас есть поле для изображения, если оно требуется
+                                            publishedDate: DateFormat('dd.MM.yyyy HH:mm').format(pagedNews[index].publishDate),
+                                            comments: [], // Если есть комментарии, добавьте их
                                           ),
                                         ),
                                       );
